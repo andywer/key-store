@@ -1,0 +1,13 @@
+.idea/
+.vscode/
+node_modules/
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+*.log
+.eslintcache
+lib/**/*.js
+lib/**/*.map
+test/**/*.js
+test/**/*.map

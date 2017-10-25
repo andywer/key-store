@@ -1,0 +1,5 @@
+lib/**/*.ts
+!lib/**/*.d.ts
+test/
+tsconfig.json
+tslint.json
