@@ -11,3 +11,4 @@ lib/**/*.js
 lib/**/*.map
 test/**/*.js
 test/**/*.map
+test/**/*.d.ts
