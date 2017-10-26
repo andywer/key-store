@@ -21,7 +21,7 @@ test('createStore() can create a store', async t => {
 
   t.is(typeof store, 'object')
   t.is(typeof store.getWalletIDs, 'function')
-  t.deepEqual(await store.getWalletIDs(), [])
+  t.deepEqual(store.getWalletIDs(), [])
 })
 
 test('loadStore() can open an existing store', async t => {
@@ -29,7 +29,6 @@ test('loadStore() can open an existing store', async t => {
 
   t.is(typeof store, 'object')
   t.is(typeof store.getWalletIDs, 'function')
-  t.deepEqual(await store.getWalletIDs(), [])
 })
 
 test('loadOrCreateStore() can create a store', async t => {
@@ -38,7 +37,6 @@ test('loadOrCreateStore() can create a store', async t => {
 
   t.is(typeof store, 'object')
   t.is(typeof store.getWalletIDs, 'function')
-  t.deepEqual(await store.getWalletIDs(), [])
   t.true((await stat(filePath)).isFile())
 })
 
@@ -47,5 +45,4 @@ test('loadOrCreateStore() can open an existing store', async t => {
 
   t.is(typeof store, 'object')
   t.is(typeof store.getWalletIDs, 'function')
-  t.deepEqual(await store.getWalletIDs(), [])
 })
