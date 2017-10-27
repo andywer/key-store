@@ -1,5 +1,9 @@
 # key-store
 
+[![Build Status](https://travis-ci.org/andywer/key-store.svg?branch=master)](https://travis-ci.org/andywer/key-store)
+[![NPM Version](https://img.shields.io/npm/v/key-store.svg)](https://www.npmjs.com/package/key-store)
+[![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+
 Encrypted key store written in TypeScript. Saves arbitrary JSON data encrypted using AES-256 to the disk.
 
 Features:
