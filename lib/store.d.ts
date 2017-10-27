@@ -19,4 +19,5 @@ export declare function createStore({saveFile, wallets}: {
     getWalletIDs(): string[];
     save(): Promise<void>;
     readWallet(walletId: string, password: string): Promise<any>;
+    saveWallet(walletId: string, password: string, walletData: any, keyMeta?: KeyMetadata | undefined): Promise<void>;
 };
