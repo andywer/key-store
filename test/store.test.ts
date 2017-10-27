@@ -12,7 +12,12 @@ test('store.getWalletIDs() returns all wallet IDs', async t => {
   t.deepEqual(store.getWalletIDs(), ['sample-wallet'])
 })
 
-test.todo('store.readWallet() can decrypt and decode a wallet')
+test('store.readWallet() can decrypt and decode a wallet', async t => {
+  const store = await loadStore(path.join(fixturesDirPath, 'sample-store'))
+  const data = await store.readWallet('sample-wallet', 'password')
+  t.deepEqual(data, { privateKey: 'superSecretKey' })
+})
+
 test.todo('store.readWallet() throws proper error on wrong password')
 test.todo('store.saveWallet() can save a new wallet')
 test.todo('store file matches snapshot')

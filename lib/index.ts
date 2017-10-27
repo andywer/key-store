@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import pify = require('pify')
-import { createStore } from './store'
+import { createStore, Wallets } from './store'
 
 const readFile = pify(fs.readFile)
 const stat = pify(fs.stat)
@@ -27,7 +27,7 @@ async function createStoreFile (filePath: string) {
 
 async function loadStoreFile (filePath: string) {
   const parsedFileContent = JSON.parse(await readFile(filePath))
-  const { wallets }: { wallets: object } = parsedFileContent
+  const { wallets }: { wallets: Wallets } = parsedFileContent
   return createStore({ saveFile: save(filePath), wallets })
 }
 
