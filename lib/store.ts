@@ -56,6 +56,19 @@ export function createStore ({ saveFile, wallets = {} }: { saveFile: SaveFile, w
       }
       delete wallets[walletId]
       await save()
+    },
+    async saveWalletPublicData (walletId: string, publicData: any) {
+      if (!(walletId in wallets)) {
+        throw new Error(`Wallet ${walletId} not found in store.`)
+      }
+      wallets[walletId].public = publicData
+      await save()
+    },
+    async readWalletPublicData (walletId: string) {
+      if (!(walletId in wallets)) {
+        throw new Error(`Wallet ${walletId} not found in store.`)
+      }
+      return wallets[walletId].public
     }
   }
 }

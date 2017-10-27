@@ -9,6 +9,8 @@ declare function createStoreFile(filePath: string): Promise<{
         salt: string;
     } | undefined): Promise<void>;
     removeWallet(walletId: string): Promise<void>;
+    saveWalletPublicData(walletId: string, publicData: any): Promise<void>;
+    readWalletPublicData(walletId: string): Promise<any>;
 }>;
 declare function loadStoreFile(filePath: string): Promise<{
     getWalletIDs(): string[];
@@ -20,6 +22,8 @@ declare function loadStoreFile(filePath: string): Promise<{
         salt: string;
     } | undefined): Promise<void>;
     removeWallet(walletId: string): Promise<void>;
+    saveWalletPublicData(walletId: string, publicData: any): Promise<void>;
+    readWalletPublicData(walletId: string): Promise<any>;
 }>;
 declare function loadOrCreateStoreFile(filePath: string): Promise<{
     getWalletIDs(): string[];
@@ -31,5 +35,7 @@ declare function loadOrCreateStoreFile(filePath: string): Promise<{
         salt: string;
     } | undefined): Promise<void>;
     removeWallet(walletId: string): Promise<void>;
+    saveWalletPublicData(walletId: string, publicData: any): Promise<void>;
+    readWalletPublicData(walletId: string): Promise<any>;
 }>;
 export { createStoreFile as createStore, loadStoreFile as loadStore, loadOrCreateStoreFile as loadOrCreateStore, storeFileExists as storeExists };

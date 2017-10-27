@@ -1,1 +1,1 @@
-{"version":1,"wallets":{"sample-wallet":{"data":"nc4D0QJdIt1rfZapdEVDHPJMbAQkY8M0d4KiBWbVmQ==","keyMeta":{"hash":"sha256","iterations":20000,"salt":"366f18a710df61af"},"public":null}}}
+{"version":1,"wallets":{"sample-wallet":{"data":"nc4D0QJdIt1rfZapdEVDHPJMbAQkY8M0d4KiBWbVmQ==","keyMeta":{"hash":"sha256","iterations":20000,"salt":"366f18a710df61af"},"public":{"publicKey":"publicKey"}}}}
