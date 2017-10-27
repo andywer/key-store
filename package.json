@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "author": "Andy Wermke (https://github.com/andywer)",
   "license": "MIT",
+  "repository": "andywer/key-store",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
