@@ -11,6 +11,22 @@ Features:
 **Attention: The data is stored in a truly secure way. If you loose your password you will not be able to recover the wallet data! So please make sure to store a backup of the private data at a safe place.**
 
 
+## Installation
+
+```sh
+npm install --save key-store
+# or using yarn
+yarn add key-store
+```
+
+
+## Concept
+
+You can read and write to a store file using this library. The store file contains a set of wallets that initially will be empty. Each wallet can store arbitrary encrypted and public (unencrypted) data. To read and write the encrypted wallet data you need to provide a password used for encryption.
+
+The store is a UTF-8-encoded text file, containing JSON-encoded data. Each wallet is stored within the JSON-encoded structure. Wallet data is saved as an AES256-XTS-encrypted JSON-encoded string, the key for the AES encryption is derived from the password using PBKDF2.
+
+
 ## API
 
 ### Exports
@@ -52,8 +68,24 @@ console.log(`Stored private key: ${privateKey}`)
 ```
 
 
-## How data is stored
+## Browser support
 
-The store is a UTF-8-encoded text file, containing JSON-encoded data.
+The library as is will not run in a browser, due to the `fs` dependency. But it should be fairly simple to get it to work in a browser by skipping the index file that contains the store loading and saving logic:
 
-Each wallet is stored within the JSON-encoded structure. Wallet data is saved as an AES256-XTS-encrypted JSON-encoded string, the key for the AES encryption is derived from the password using PBKDF2.
+```js
+import { createStore } from 'key-store/lib/store'
+
+const wallets = JSON.parse(window.localStore.getItem('wallets'))
+const saveFile = async content => {
+  window.localStore.setItem('wallets', content)
+}
+
+const store = createStore({ saveFile, wallets })
+```
+
+Webpack will automatically polyfill the `crypto` module and the code should run just fine.
+
+
+## License
+
+MIT
