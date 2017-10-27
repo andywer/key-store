@@ -49,6 +49,13 @@ export function createStore ({ saveFile, wallets = {} }: { saveFile: SaveFile, w
       const data = encryptWalletData(JSON.stringify(walletData), password, keyMeta)
       wallets[walletId] = { data, keyMeta, public: null }
       await save()
+    },
+    async removeWallet (walletId: string) {
+      if (!(walletId in wallets)) {
+        throw new Error(`Wallet ${walletId} not found in store.`)
+      }
+      delete wallets[walletId]
+      await save()
     }
   }
 }
