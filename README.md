@@ -4,7 +4,7 @@
 [![NPM Version](https://img.shields.io/npm/v/key-store.svg)](https://www.npmjs.com/package/key-store)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
-Encrypted key store written in TypeScript. Saves arbitrary JSON data encrypted using AES-256 to the disk.
+Encrypted key store written in TypeScript. Saves arbitrary JSON data encrypted using AES-256.
 
 Features:
 
@@ -12,7 +12,7 @@ Features:
 * Supports distinct passwords for each wallet
 * Can store publicly readable data for each wallet, too
 
-**Attention: The data is stored in a truly secure way. If you loose your password you will not be able to recover the wallet data! So please make sure to store a backup of the private data at a safe place.**
+**Attention: The data is stored in a truly secure way. If you loose your password you will not be able to recover the wallet data! So please make sure to store a backup of the private data in a safe place.**
 
 
 ## Installation
@@ -35,19 +35,19 @@ The store is a UTF-8-encoded text file, containing JSON-encoded data. Each walle
 
 ### Exports
 
-#### storeExists(storePath: string): Promise<bool>
-#### createStore(storePath: string): Promise<Store>
-#### loadStore(storePath: string): Promise<Store>
-#### loadOrCreateStore(storePath: string): Promise<Store>
+#### `storeExists(storePath: string): Promise<bool>`
+#### `createStore(storePath: string): Promise<Store>`
+#### `loadStore(storePath: string): Promise<Store>`
+#### `loadOrCreateStore(storePath: string): Promise<Store>`
 
 ### Store
 
-#### store.getWalletIDs(): string[]
-#### store.readWallet(walletID: string, password: string): Promise<WalletData>
-#### store.saveWallet(walletID: string, password: string, data: WalletData): Promise<void>
-#### store.removeWallet(walletID: string): Promise<void>
-#### store.readWalletPublicData(walletID: string): Promise<WalletData>
-#### store.saveWalletPublicData(walletID: string, data: WalletData): Promise<void>
+#### `store.getWalletIDs(): string[]`
+#### `store.readWallet(walletID: string, password: string): Promise<WalletData>`
+#### `store.saveWallet(walletID: string, password: string, data: WalletData): Promise<void>`
+#### `store.removeWallet(walletID: string): Promise<void>`
+#### `store.readWalletPublicData(walletID: string): Promise<WalletData>`
+#### `store.saveWalletPublicData(walletID: string, data: WalletData): Promise<void>`
 
 #### WalletData
 
