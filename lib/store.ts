@@ -7,9 +7,9 @@ export type Wallets = {
 }
 
 export type Wallet = {
-  data: string,
   keyMeta: KeyMetadata,
-  public: any
+  public: any,
+  private: string
 }
 
 export type KeyMetadata = {
@@ -34,8 +34,8 @@ export function createStore ({ saveFile, wallets = {} }: { saveFile: SaveFile, w
       if (!(walletId in wallets)) {
         throw new Error(`Wallet ${walletId} not found in store.`)
       }
-      const { data, keyMeta } = wallets[walletId]
-      const decrypted = decryptWalletData(data, password, keyMeta)
+      const { private: privateData, keyMeta } = wallets[walletId]
+      const decrypted = decryptWalletData(privateData, password, keyMeta)
       try {
         return JSON.parse(decrypted)
       } catch (error) {
@@ -46,8 +46,8 @@ export function createStore ({ saveFile, wallets = {} }: { saveFile: SaveFile, w
       if (!keyMeta) {
         keyMeta = walletId in wallets ? wallets[walletId].keyMeta : await createKeyMetadata()
       }
-      const data = encryptWalletData(JSON.stringify(walletData), password, keyMeta)
-      wallets[walletId] = { data, keyMeta, public: null }
+      const privateData = encryptWalletData(JSON.stringify(walletData), password, keyMeta)
+      wallets[walletId] = { private: privateData, keyMeta, public: null }
       await save()
     },
     async removeWallet (walletId: string) {

@@ -2,9 +2,9 @@ export declare type Wallets = {
     [key: string]: Wallet;
 };
 export declare type Wallet = {
-    data: string;
     keyMeta: KeyMetadata;
     public: any;
+    private: string;
 };
 export declare type KeyMetadata = {
     hash: string;
