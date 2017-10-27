@@ -34,7 +34,12 @@ export function createStore ({ saveFile, wallets = {} }: { saveFile: SaveFile, w
         throw new Error(`Wallet ${walletId} not found in store.`)
       }
       const { data, keyMeta } = wallets[walletId]
-      return JSON.parse(decryptWalletData(data, password, keyMeta))
+      const decrypted = decryptWalletData(data, password, keyMeta)
+      try {
+        return JSON.parse(decrypted)
+      } catch (error) {
+        throw new Error(`Cannot parse decrypted wallet ${walletId}. The provided password is probably wrong.`)
+      }
     }
   }
 }

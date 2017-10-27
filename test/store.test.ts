@@ -18,7 +18,14 @@ test('store.readWallet() can decrypt and decode a wallet', async t => {
   t.deepEqual(data, { privateKey: 'superSecretKey' })
 })
 
-test.todo('store.readWallet() throws proper error on wrong password')
+test('store.readWallet() throws proper error on wrong password', async t => {
+  const store = await loadStore(path.join(fixturesDirPath, 'sample-store'))
+  await t.throws(
+    store.readWallet('sample-wallet', 'wrong password'),
+    /The provided password is probably wrong/
+  )
+})
+
 test.todo('store.saveWallet() can save a new wallet')
 test.todo('store file matches snapshot')
 test.todo('store.saveWallet() can update an existing wallet')
