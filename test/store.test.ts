@@ -100,7 +100,7 @@ test('store file matches snapshot', async t => {
   const filePath = temp.path()
   const store = await createStore(filePath)
 
-  await store.saveWallet('walletID', 'somePassword', { privateKey: 'secretPrivateKey' }, { hash: 'sha256', iterations: 20000, salt: 'AbCdEf01234' })
+  await store.saveWallet('walletID', 'somePassword', { privateKey: 'secretPrivateKey' }, { hash: 'sha256', iterations: 20000, salt: 'abcdef012345' })
   await store.saveWalletPublicData('walletID', { publicKey: 'publicKey' })
 
   t.deepEqual(store.getWalletIDs(), ['walletID'])
