@@ -9,7 +9,7 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && ava",
+    "test": "tsc && ava-ts",
     "posttest": "tslint 'lib/**/*.ts' -e '**/*.d.ts'",
     "prepublishOnly": "npm run build && npm test"
   },
@@ -21,7 +21,9 @@
     "@types/pify": "^3.0.0",
     "@types/temp": "^0.8.31",
     "ava": "^0.23.0",
+    "ava-ts": "^0.23.0",
     "temp": "^0.8.3",
+    "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
     "tslint-config-standard": "^6.0.1",
     "typescript": "^2.5.3"

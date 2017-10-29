@@ -7,8 +7,8 @@ Thumbs.db
 *.sublime-workspace
 *.log
 .eslintcache
-lib/**/*.js
-lib/**/*.map
-test/**/*.js
-test/**/*.map
-test/**/*.d.ts
+/lib/
+!/lib/*.d.ts
+/test/**/*.js
+/test/**/*.map
+/test/**/*.d.ts

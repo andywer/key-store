@@ -1,5 +1,4 @@
-lib/**/*.ts
-!lib/**/*.d.ts
+src/
 test/
 tsconfig.json
 tslint.json
