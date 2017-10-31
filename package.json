@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "test": "tsc && ava-ts",
-    "posttest": "tslint 'src/**/*.ts' -e '**/*.d.ts'",
+    "posttest": "tslint --project . 'src/**/*.ts' -e '**/*.d.ts'",
     "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
