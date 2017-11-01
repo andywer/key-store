@@ -24,6 +24,24 @@ yarn add key-store
 ```
 
 
+## Example
+
+```js
+import { loadStore } from 'key-store'
+
+const store = await loadStore('~/.wallets')
+const allWalletIDs = await store.getWalletIDs()
+
+console.log(`All available wallets: ${allWalletIDs.join(', ')}`)
+
+await store.saveWallet('my-wallet', 'arbitrary password', { privateKey: 'super secret private key' })
+console.log(`Created a new wallet named 'my-wallet'.`)
+
+const { privateKey } = await store.readWallet('my-wallet', 'arbitrary password')
+console.log(`Stored private key: ${privateKey}`)
+```
+
+
 ## Concept
 
 You can read and write to a store file using this library. The store file contains a set of wallets that initially will be empty. Each wallet can store arbitrary encrypted and public (unencrypted) data. To read and write the encrypted wallet data you need to provide a password used for encryption.
@@ -52,24 +70,6 @@ The store is a UTF-8-encoded text file, containing JSON-encoded data. Each walle
 #### WalletData
 
 Can be any kind of value that is JSON encodable/decodable (object, array, string, ...).
-
-
-## Example
-
-```js
-import { loadStore } from 'key-store'
-
-const store = await loadStore('~/.wallets')
-const allWalletIDs = await store.getWalletIDs()
-
-console.log(`All available wallets: ${allWalletIDs.join(', ')}`)
-
-await store.saveWallet('my-wallet', 'arbitrary password', { privateKey: 'super secret private key' })
-console.log(`Created a new wallet named 'my-wallet'.`)
-
-const { privateKey } = await store.readWallet('my-wallet', 'arbitrary password')
-console.log(`Stored private key: ${privateKey}`)
-```
 
 
 ## Browser support
