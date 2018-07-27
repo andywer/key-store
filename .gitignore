@@ -1,14 +1,5 @@
-.idea/
-.vscode/
+lib/
 node_modules/
 .DS_Store
 Thumbs.db
-*.sublime-project
-*.sublime-workspace
 *.log
-.eslintcache
-/lib/
-!/lib/*.d.ts
-/test/**/*.js
-/test/**/*.map
-/test/**/*.d.ts
