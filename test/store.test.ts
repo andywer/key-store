@@ -1,110 +1,81 @@
 import test from 'ava'
-import * as fs from 'fs'
-import * as path from 'path'
-import * as temp from 'temp'
-import pify = require('pify')
-import { createStore, loadStore } from '../lib'
+import { createStore, KeysData } from '../src'
 
-temp.track()
+interface PrivateData {
+  key: string
+}
 
-const fixturesDirPath = path.join(__dirname, '_fixtures')
-const readFile = pify(fs.readFile)
+function createMockStorage<PublicKeyData = {}> () {
+  let data: KeysData<PublicKeyData> = {}
 
-test('store.getWalletIDs() returns all wallet IDs', async t => {
-  const store = await loadStore(path.join(fixturesDirPath, 'sample-store'))
-  t.deepEqual(store.getWalletIDs(), ['sample-wallet'])
+  return {
+    save (newData: KeysData<PublicKeyData>) {
+      data = newData
+    },
+    read () {
+      return data
+    }
+  }
+}
+
+test('can create store', t => {
+  const storage = createMockStorage()
+  const store = createStore<PrivateData>(storage.save)
+
+  t.deepEqual(store.getKeyIDs(), [])
 })
 
-test('store.readWallet() can decrypt and decode a wallet', async t => {
-  const store = await loadStore(path.join(fixturesDirPath, 'sample-store'))
-  const data = await store.readWallet('sample-wallet', 'password')
-  t.deepEqual(data, { privateKey: 'superSecretKey' })
+test('can save a key', async t => {
+  type PublicData = { publicData: string }
+
+  const storage = createMockStorage<PublicData>()
+  const store = createStore<PrivateData, PublicData>(storage.save)
+
+  await store.saveKey('sample-key', 'testpassword', { key: 'SECRET' }, { publicData: 'foo' })
+
+  t.deepEqual(store.getKeyIDs(), ['sample-key'])
+  t.deepEqual(storage.read()['sample-key'].metadata.iterations, 10000)
+  t.deepEqual(storage.read()['sample-key'].public, { publicData: 'foo' })
 })
 
-test('store.readWallet() throws proper error on wrong password', async t => {
-  const store = await loadStore(path.join(fixturesDirPath, 'sample-store'))
-  await t.throws(
-    store.readWallet('sample-wallet', 'wrong password'),
-    /The provided password is probably wrong/
-  )
+test('can read a key', async t => {
+  type PublicData = { publicData: string }
+
+  const initialData = {
+    'test': {
+      metadata: {
+        initVector: '3kHPgnRosojK0fku0cT07hzjNlun+NQI',
+        iterations: 10000
+      },
+      public: { publicData: 'bar' },
+      private: 'y49x8eM9p2nQUkAoWO/XLCJ1uovI13Z5ZdGi26p07uc='
+    }
+  }
+
+  const storage = createMockStorage<PublicData>()
+  const store = createStore<PrivateData, PublicData>(storage.save, initialData)
+
+  t.deepEqual(store.getPublicKeyData('test'), { publicData: 'bar' })
+  t.deepEqual(store.getPrivateKeyData('test', 'testpassword'), { key: 'SECRET' })
 })
 
-test('store.saveWallet() can save a new wallet', async t => {
-  const filePath = temp.path()
-  const store = await createStore(filePath)
+test('can remove a key', async t => {
+  const initialData = {
+    'test': {
+      metadata: {
+        initVector: '3kHPgnRosojK0fku0cT07hzjNlun+NQI',
+        iterations: 10000
+      },
+      public: {},
+      private: 'y49x8eM9p2nQUkAoWO/XLCJ1uovI13Z5ZdGi26p07uc='
+    }
+  }
 
-  await store.saveWallet('walletID', 'somePassword', { privateKey: 'secretPrivateKey' })
+  const storage = createMockStorage()
+  const store = createStore<PrivateData>(storage.save, initialData)
 
-  t.deepEqual(store.getWalletIDs(), ['walletID'])
-  t.deepEqual(await store.readWallet('walletID', 'somePassword'), { privateKey: 'secretPrivateKey' })
+  await store.removeKey('test')
 
-  const reloadedStore = await loadStore(filePath)
-
-  t.deepEqual(reloadedStore.getWalletIDs(), ['walletID'])
-  t.deepEqual(await reloadedStore.readWallet('walletID', 'somePassword'), { privateKey: 'secretPrivateKey' })
-})
-
-test('store.saveWallet() can update an existing wallet', async t => {
-  const filePath = temp.path()
-  const store = await createStore(filePath)
-
-  await store.saveWallet('walletID', 'somePassword', { privateKey: 'secretPrivateKey' })
-  await store.saveWallet('walletID', 'somePassword', { privateKey: 'newPrivateKey' })
-
-  t.deepEqual(await store.readWallet('walletID', 'somePassword'), { privateKey: 'newPrivateKey' })
-
-  let reloadedStore = await loadStore(filePath)
-  t.deepEqual(await reloadedStore.readWallet('walletID', 'somePassword'), { privateKey: 'newPrivateKey' })
-
-  await store.saveWallet('walletID', 'newPassword', { privateKey: 'newPrivateKey' })
-  t.deepEqual(await store.readWallet('walletID', 'newPassword'), { privateKey: 'newPrivateKey' })
-
-  reloadedStore = await loadStore(filePath)
-  t.deepEqual(await reloadedStore.readWallet('walletID', 'newPassword'), { privateKey: 'newPrivateKey' })
-})
-
-test('store.removeWallet() can delete a wallet from the store', async t => {
-  const filePath = temp.path()
-  const store = await createStore(filePath)
-
-  await store.saveWallet('walletID', 'somePassword', { privateKey: 'secretPrivateKey' })
-  t.deepEqual(store.getWalletIDs(), ['walletID'])
-
-  await store.removeWallet('walletID')
-  t.deepEqual(store.getWalletIDs(), [])
-
-  const reloadedStore = await loadStore(filePath)
-  t.deepEqual(reloadedStore.getWalletIDs(), [])
-})
-
-test('store.readWalletPublicData() can read the unencrypted wallet metadata', async t => {
-  const store = await loadStore(path.join(fixturesDirPath, 'sample-store'))
-  const data = await store.readWalletPublicData('sample-wallet')
-  t.deepEqual(data, { publicKey: 'publicKey' })
-})
-
-test('store.saveWalletPublicData() can save unencrypted wallet metadata', async t => {
-  const filePath = temp.path()
-  const store = await createStore(filePath)
-
-  await store.saveWallet('walletID', 'somePassword', { privateKey: 'secretPrivateKey' })
-  await store.saveWalletPublicData('walletID', { publicKey: 'publicKey' })
-
-  t.deepEqual(await store.readWalletPublicData('walletID'), { publicKey: 'publicKey' })
-
-  const reloadedStore = await loadStore(filePath)
-  t.deepEqual(await reloadedStore.readWalletPublicData('walletID'), { publicKey: 'publicKey' })
-})
-
-test('store file matches snapshot', async t => {
-  const filePath = temp.path()
-  const store = await createStore(filePath)
-
-  await store.saveWallet('walletID', 'somePassword', { privateKey: 'secretPrivateKey' }, { hash: 'sha256', iterations: 20000, salt: 'abcdef012345' })
-  await store.saveWalletPublicData('walletID', { publicKey: 'publicKey' })
-
-  t.deepEqual(store.getWalletIDs(), ['walletID'])
-  t.deepEqual(await store.readWallet('walletID', 'somePassword'), { privateKey: 'secretPrivateKey' })
-
-  t.snapshot(JSON.parse(await readFile(filePath)))
+  t.deepEqual(store.getKeyIDs(), [])
+  t.deepEqual(storage.read(), {})
 })
