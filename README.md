@@ -33,7 +33,7 @@ $ yarn add key-store
 ```js
 import { createStore } from 'key-store'
 
-const store = await createStore(saveFile, initialData)
+const store = createStore(saveFile, initialData)
 
 await store.saveKey('test-key', 'arbitrary password', { privateKey: 'super secret private key' })
 
@@ -41,6 +41,24 @@ const { privateKey } = store.getPrivateKeyData('test-key', 'arbitrary password')
 
 console.log(`Stored private key: ${privateKey}`)
 console.log(`All stored keys' IDs: ${store.getKeyIDs().join(', ')}`)
+```
+
+Writing and reading keys to a file in node is easy:
+
+```js
+import * as fs from 'fs'
+import * as util from 'util'
+import { createStore } from 'key-store'
+
+const readFile = util.promisify(fs.readFile)
+const writeFile = util.promisify(fs.writeFile)
+
+async function createFileStore (filePath) {
+  const saveKeys = data => writeFile(filePath, JSON.stringify(data), 'utf8')
+  const readKeys = async () => JSON.parse(await readFile(filePath, 'utf8'))
+
+  return createStore(saveKeys, await readKeys())
+}
 ```
 
 
