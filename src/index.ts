@@ -7,6 +7,7 @@ export interface KeyStore<PrivateKeyData, PublicKeyData> {
   getPublicKeyData (keyID: string): PublicKeyData
   getPrivateKeyData (keyID: string, password: string): PrivateKeyData
   saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData): Promise<void>
+  savePublicKeyData (keyID: string, publicData: PublicKeyData): Promise<void>
   removeKey (keyID: string): Promise<void>
 }
 
@@ -82,6 +83,17 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
         metadata,
         public: publicData as any,
         private: encrypt(privateData, metadata, password)
+      }
+      await save(keysData)
+    },
+    async savePublicKeyData (keyID: string, publicData: PublicKeyData) {
+      if (!keysData[keyID]) {
+        // Prevent creating an incomplete key record
+        throw new Error(`Cannot save public data for key ${keyID}. Key does not yet exist in store.`)
+      }
+      keysData[keyID] = {
+        ...keysData[keyID],
+        public: publicData
       }
       await save(keysData)
     },

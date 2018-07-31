@@ -59,6 +59,29 @@ test('can read a key', async t => {
   t.deepEqual(store.getPrivateKeyData('test', 'testpassword'), { key: 'SECRET' })
 })
 
+test('can edit key public data without a password', async t => {
+  type PublicData = { publicData: string }
+
+  const initialData = {
+    'test': {
+      metadata: {
+        nonce: '3kHPgnRosojK0fku0cT07hzjNlun+NQI',
+        iterations: 10000
+      },
+      public: { publicData: 'foo' },
+      private: 'y49x8eM9p2nQUkAoWO/XLCJ1uovI13Z5ZdGi26p07uc='
+    }
+  }
+
+  const storage = createMockStorage<PublicData>()
+  const store = createStore<PrivateData, PublicData>(storage.save, initialData)
+
+  await store.savePublicKeyData('test', { publicData: 'bar' })
+
+  t.deepEqual(store.getPublicKeyData('test'), { publicData: 'bar' })
+  t.deepEqual(store.getPrivateKeyData('test', 'testpassword'), { key: 'SECRET' })
+})
+
 test('can remove a key', async t => {
   const initialData = {
     'test': {
