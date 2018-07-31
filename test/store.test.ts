@@ -44,7 +44,7 @@ test('can read a key', async t => {
   const initialData = {
     'test': {
       metadata: {
-        initVector: '3kHPgnRosojK0fku0cT07hzjNlun+NQI',
+        nonce: '3kHPgnRosojK0fku0cT07hzjNlun+NQI',
         iterations: 10000
       },
       public: { publicData: 'bar' },
@@ -63,7 +63,7 @@ test('can remove a key', async t => {
   const initialData = {
     'test': {
       metadata: {
-        initVector: '3kHPgnRosojK0fku0cT07hzjNlun+NQI',
+        nonce: '3kHPgnRosojK0fku0cT07hzjNlun+NQI',
         iterations: 10000
       },
       public: {},

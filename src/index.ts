@@ -11,7 +11,7 @@ export interface KeyStore<PrivateKeyData, PublicKeyData> {
 }
 
 interface KeyMetadata {
-  initVector: string,
+  nonce: string,
   iterations: number
 }
 
@@ -25,14 +25,14 @@ export interface KeysData<PublicKeyData> {
 
 export type SaveKeys<PublicKeyData> = (data: KeysData<PublicKeyData>) => Promise<void> | void
 
-function randomInitVector () {
+function randomNonce () {
   return naclUtil.encodeBase64(nacl.randomBytes(nacl.secretbox.nonceLength))
 }
 
 function deriveHashFromPassword (password: string, metadata: KeyMetadata) {
   return sha256.pbkdf2(
     naclUtil.decodeUTF8(password),
-    naclUtil.decodeBase64(metadata.initVector),
+    naclUtil.decodeBase64(metadata.nonce),
     metadata.iterations,
     nacl.secretbox.keyLength
   )
@@ -40,7 +40,7 @@ function deriveHashFromPassword (password: string, metadata: KeyMetadata) {
 
 function decrypt (encryptedBase64: string, metadata: KeyMetadata, password: string) {
   const secretKey = deriveHashFromPassword(password, metadata)
-  const decrypted = nacl.secretbox.open(naclUtil.decodeBase64(encryptedBase64), naclUtil.decodeBase64(metadata.initVector), secretKey)
+  const decrypted = nacl.secretbox.open(naclUtil.decodeBase64(encryptedBase64), naclUtil.decodeBase64(metadata.nonce), secretKey)
 
   if (!decrypted) {
     throw new Error('Decryption failed.')
@@ -51,7 +51,7 @@ function decrypt (encryptedBase64: string, metadata: KeyMetadata, password: stri
 function encrypt (privateData: any, metadata: KeyMetadata, password: string): string {
   const secretKey = deriveHashFromPassword(password, metadata)
   const data = naclUtil.decodeUTF8(JSON.stringify(privateData))
-  const encrypted = nacl.secretbox(data, naclUtil.decodeBase64(metadata.initVector), secretKey)
+  const encrypted = nacl.secretbox(data, naclUtil.decodeBase64(metadata.nonce), secretKey)
   return naclUtil.encodeBase64(encrypted)
 }
 
@@ -75,7 +75,7 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
     },
     async saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData | {} = {}) {
       const metadata = {
-        initVector: randomInitVector(),
+        nonce: randomNonce(),
         iterations
       }
       keysData[keyID] = {
