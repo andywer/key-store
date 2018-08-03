@@ -98,6 +98,9 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
       await save(keysData)
     },
     async removeKey (keyID: string) {
+      if (!keysData[keyID]) {
+        throw new Error(`Cannot delete key ${keyID}. Key not found.`)
+      }
       delete keysData[keyID]
       await save(keysData)
     }
