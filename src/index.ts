@@ -75,6 +75,8 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
       return decrypt(keysData[keyID].private, keysData[keyID].metadata, password) as PrivateKeyData
     },
     async saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData | {} = {}) {
+      // Important: Do not re-use previous metadata!
+      // Use a fresh nonce. Also the previous metadata might have been forged.
       const metadata = {
         nonce: randomNonce(),
         iterations
