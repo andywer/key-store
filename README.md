@@ -12,7 +12,7 @@ Isomorphic encrypted key store. Works in node and in the browser.
 🔑 Supports distinct passwords for each key<br />
 🔍 Can store unencrypted data alongside each key
 
-**Attention: The data is stored in a truly secure way. If you loose your password you will not be able to recover the wallet data! So please make sure to store a backup of the private data in a safe place.**
+**Attention: The data is stored in a truly secure way. If you lose your password you will not be able to recover the wallet data! So please make sure to store a backup of the private data in a safe place.**
 
 
 ## Installation
