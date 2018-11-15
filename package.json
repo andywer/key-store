@@ -1,6 +1,6 @@
 {
   "name": "key-store",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Isomorphic encrypted key store written in TypeScript.",
   "author": "Andy Wermke (https://github.com/andywer)",
   "license": "MIT",
