@@ -38,6 +38,23 @@ test('can save a key', async t => {
   t.deepEqual(storage.read()['sample-key'].public, { publicData: 'foo' })
 })
 
+test('can save multiple keys', async t => {
+  type PublicData = { publicData: string }
+
+  const storage = createMockStorage<PublicData>()
+  const store = createStore<PrivateData, PublicData>(storage.save)
+
+  await store.saveKeys('testpassword', [
+    {keyID: 'sample-key', privateData: { key: 'SECRET' }, publicData: { publicData: 'foo' }},
+    {keyID: 'sample-key2', privateData: { key: 'SECRET2' }}
+  ])
+
+  t.deepEqual(store.getKeyIDs(), ['sample-key', 'sample-key2'])
+  t.deepEqual(storage.read()['sample-key'].metadata.iterations, 10000)
+  t.deepEqual(storage.read()['sample-key'].public, { publicData: 'foo' })
+  t.deepEqual(storage.read()['sample-key2'].public, { })
+})
+
 test('can read a key', async t => {
   type PublicData = { publicData: string }
 
