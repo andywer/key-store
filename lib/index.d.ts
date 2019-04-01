@@ -1,5 +1,6 @@
 export interface KeyStore<PrivateKeyData, PublicKeyData> {
     getKeyIDs(): string[];
+    reencrypt(oldPassword: string, newPassword: string): Promise<void>;
     getPublicKeyData(keyID: string): PublicKeyData;
     getPrivateKeyData(keyID: string, password: string): PrivateKeyData;
     saveKey(keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData): Promise<void>;

@@ -4,6 +4,7 @@ import naclUtil from 'tweetnacl-util'
 
 export interface KeyStore<PrivateKeyData, PublicKeyData> {
   getKeyIDs (): string[]
+  reencrypt (oldPassword: string, newPassword: string): Promise<void>
   getPublicKeyData (keyID: string): PublicKeyData
   getPrivateKeyData (keyID: string, password: string): PrivateKeyData
   saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData): Promise<void>
@@ -82,6 +83,16 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
   return {
     getKeyIDs () {
       return Object.keys(keysData)
+    },
+    reencrypt (oldPassword: string, newPassword: string) {
+      const data = this.getKeyIDs()
+        .map(keyID => ({
+          keyID,
+          privateData: this.getPrivateKeyData(keyID, oldPassword),
+          publicData: this.getPublicKeyData(keyID)
+        }))
+
+      return this.saveKeys(newPassword, data)
     },
     getPublicKeyData (keyID: string) {
       return keysData[keyID].public

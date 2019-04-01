@@ -119,3 +119,19 @@ test('can remove a key', async t => {
   t.deepEqual(store.getKeyIDs(), [])
   t.deepEqual(storage.read(), {})
 })
+
+test('can replace password', async t => {
+  type PublicData = { publicData: string }
+  const password1 = 'first_password'
+  const password2 = 'second_password'
+  const storage = createMockStorage<PublicData>()
+  const store = createStore<PrivateData, PublicData>(storage.save)
+
+  await store.saveKey('sample-key', password1, { key: 'SECRET' }, { publicData: 'foo' })
+  await store.reencrypt(password1, password2)
+
+  t.deepEqual(store.getKeyIDs(), ['sample-key'])
+  t.deepEqual(storage.read()['sample-key'].metadata.iterations, 10000)
+  t.deepEqual(store.getPrivateKeyData('sample-key', password2), { key: 'SECRET' })
+  t.deepEqual(store.getPublicKeyData('sample-key'), { publicData: 'foo' })
+})
