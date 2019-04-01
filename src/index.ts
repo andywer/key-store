@@ -65,7 +65,7 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
   const { iterations = 10000 } = options
   let keysData = initialKeys
 
-  function _saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData | {} = {}): void {
+  function saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData | {} = {}): void {
     // Important: Do not re-use previous metadata!
     // Use a fresh nonce. Also the previous metadata might have been forged.
     const metadata = {
@@ -90,11 +90,11 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
       return decrypt(keysData[keyID].private, keysData[keyID].metadata, password) as PrivateKeyData
     },
     async saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData | {} = {}) {
-      _saveKey(keyID, password, privateData, publicData)
+      saveKey(keyID, password, privateData, publicData)
       await save(keysData)
     },
     async saveKeys (password: string, data: {keyID: string, privateData: PrivateKeyData, publicData: PublicKeyData}[]) {
-      data.forEach(d => _saveKey(d.keyID, password, d.privateData, d.publicData))
+      data.forEach(d => saveKey(d.keyID, password, d.privateData, d.publicData))
       await save(keysData)
     },
     async savePublicKeyData (keyID: string, publicData: PublicKeyData) {
