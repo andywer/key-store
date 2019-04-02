@@ -7,7 +7,7 @@ export interface KeyStore<PrivateKeyData, PublicKeyData> {
   getPublicKeyData (keyID: string): PublicKeyData
   getPrivateKeyData (keyID: string, password: string): PrivateKeyData
   saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData): Promise<void>
-  saveKeys (password: string, data: {keyID: string, privateData: PrivateKeyData, publicData?: PublicKeyData}[]): Promise<void>
+  saveKeys (data: {keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData}[]): Promise<void>
   savePublicKeyData (keyID: string, publicData: PublicKeyData): Promise<void>
   removeKey (keyID: string): Promise<void>
 }
@@ -93,8 +93,8 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
       saveKey(keyID, password, privateData, publicData)
       await save(keysData)
     },
-    async saveKeys (password: string, data: {keyID: string, privateData: PrivateKeyData, publicData: PublicKeyData}[]) {
-      data.forEach(d => saveKey(d.keyID, password, d.privateData, d.publicData))
+    async saveKeys (data: {keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData}[]) {
+      data.forEach(d => saveKey(d.keyID, d.password, d.privateData, d.publicData))
       await save(keysData)
     },
     async savePublicKeyData (keyID: string, publicData: PublicKeyData) {
