@@ -3,8 +3,9 @@ export interface KeyStore<PrivateKeyData, PublicKeyData> {
     getPublicKeyData(keyID: string): PublicKeyData;
     getPrivateKeyData(keyID: string, password: string): PrivateKeyData;
     saveKey(keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData): Promise<void>;
-    saveKeys(password: string, data: {
+    saveKeys(data: {
         keyID: string;
+        password: string;
         privateData: PrivateKeyData;
         publicData?: PublicKeyData;
     }[]): Promise<void>;
