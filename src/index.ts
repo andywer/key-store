@@ -7,6 +7,7 @@ export interface KeyStore<PrivateKeyData, PublicKeyData> {
   getPublicKeyData (keyID: string): PublicKeyData
   getPrivateKeyData (keyID: string, password: string): PrivateKeyData
   saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData): Promise<void>
+  saveKeys (data: {keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData}[]): Promise<void>
   savePublicKeyData (keyID: string, publicData: PublicKeyData): Promise<void>
   removeKey (keyID: string): Promise<void>
 }
@@ -64,6 +65,20 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
   const { iterations = 10000 } = options
   let keysData = initialKeys
 
+  function saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData | {} = {}): void {
+    // Important: Do not re-use previous metadata!
+    // Use a fresh nonce. Also the previous metadata might have been forged.
+    const metadata = {
+      nonce: randomNonce(),
+      iterations
+    }
+    keysData[keyID] = {
+      metadata,
+      public: publicData as any,
+      private: encrypt(privateData, metadata, password)
+    }
+  }
+
   return {
     getKeyIDs () {
       return Object.keys(keysData)
@@ -75,17 +90,11 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
       return decrypt(keysData[keyID].private, keysData[keyID].metadata, password) as PrivateKeyData
     },
     async saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData | {} = {}) {
-      // Important: Do not re-use previous metadata!
-      // Use a fresh nonce. Also the previous metadata might have been forged.
-      const metadata = {
-        nonce: randomNonce(),
-        iterations
-      }
-      keysData[keyID] = {
-        metadata,
-        public: publicData as any,
-        private: encrypt(privateData, metadata, password)
-      }
+      saveKey(keyID, password, privateData, publicData)
+      await save(keysData)
+    },
+    async saveKeys (data: {keyID: string, password: string, privateData: PrivateKeyData, publicData: PublicKeyData}[]) {
+      data.forEach(d => saveKey(d.keyID, d.password, d.privateData, d.publicData))
       await save(keysData)
     },
     async savePublicKeyData (keyID: string, publicData: PublicKeyData) {
