@@ -76,6 +76,7 @@ test('can read a key', async t => {
 
   t.deepEqual(store.getPublicKeyData('test'), { publicData: 'bar' })
   t.deepEqual(store.getPrivateKeyData('test', 'testpassword'), { key: 'SECRET' })
+  t.deepEqual(store.getRawKeyData('test'), initialData['test'])
 })
 
 test('can edit key public data without a password', async t => {
