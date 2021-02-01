@@ -6,6 +6,7 @@ export interface KeyStore<PrivateKeyData, PublicKeyData> {
   getKeyIDs (): string[]
   getPublicKeyData (keyID: string): PublicKeyData
   getPrivateKeyData (keyID: string, password: string): PrivateKeyData
+  getRawKeyData (keyID: string): RawKeyData<PublicKeyData>
   saveKey (keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData): Promise<void>
   saveKeys (data: {keyID: string, password: string, privateData: PrivateKeyData, publicData?: PublicKeyData}[]): Promise<void>
   savePublicKeyData (keyID: string, publicData: PublicKeyData): Promise<void>
@@ -17,12 +18,14 @@ interface KeyMetadata {
   iterations: number
 }
 
+export interface RawKeyData<PublicKeyData> {
+  metadata: KeyMetadata,
+  public: PublicKeyData,
+  private: string
+}
+
 export interface KeysData<PublicKeyData> {
-  [keyID: string]: {
-    metadata: KeyMetadata,
-    public: PublicKeyData,
-    private: string
-  }
+  [keyID: string]: RawKeyData<PublicKeyData>
 }
 
 export type SaveKeys<PublicKeyData> = (data: KeysData<PublicKeyData>) => Promise<void> | void
@@ -85,6 +88,9 @@ export function createStore<PrivateKeyData, PublicKeyData = {}> (
     },
     getPublicKeyData (keyID: string) {
       return keysData[keyID].public
+    },
+    getRawKeyData (keyID: string) {
+      return keysData[keyID]
     },
     getPrivateKeyData (keyID: string, password: string) {
       return decrypt(keysData[keyID].private, keysData[keyID].metadata, password) as PrivateKeyData
